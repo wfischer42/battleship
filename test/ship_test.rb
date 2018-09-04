@@ -39,7 +39,6 @@ class ShipTest < Minitest::Test
     assert ship.overlap?("A2", "C2")
   end
 
-
   def test_it_is_seaworthy_by_default
     ship = Ship.new("A1", "A4")
     assert_equal [], ship.hits
@@ -56,33 +55,26 @@ class ShipTest < Minitest::Test
 
   def test_it_isnt_hit_by_bad_shot
     ship = Ship.new("B2", "D2")
-    shot_1 = "A1"
-    shot_2 = "C4"
-    assert_equal :miss, ship.resolve_shot(shot_1)
-    assert_equal :miss, ship.resolve_shot(shot_1)
+    assert_equal :miss, ship.resolve_shot("A1")
+    assert_equal :miss, ship.resolve_shot("C4")
   end
 
   def test_it_keeps_track_of_hits
     ship = Ship.new("A1", "A4")
     assert_equal [], ship.hits
-    shot_1 = "A1"
-    shot_2 = "A3"
-    ship.resolve_shot(shot_1)
-    ship.resolve_shot(shot_2)
+    ship.resolve_shot("A1")
+    ship.resolve_shot("A3")
     assert_equal ["A1", "A3"], ship.hits
   end
 
   def test_it_can_be_sunk
     ship = Ship.new("A1", "A3")
-    shot_1 = "A1"
-    shot_2 = "A2"
-    shot_3 = "A3"
 
-    ship.resolve_shot(shot_1)
-    ship.resolve_shot(shot_2)
+    ship.resolve_shot("A1")
+    ship.resolve_shot("A2")
     assert ship.floating?
 
-    ship.resolve_shot(shot_3)
+    ship.resolve_shot("A3")
     refute ship.floating?
   end
 end

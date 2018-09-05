@@ -47,6 +47,18 @@ class BattleGridTest < Minitest::Test
     assert_equal [ship_1, ship_2], p1_grid.ships
   end
 
+  def test_it_can_list_unoccupied_cells_for_ship_placement
+    p1_grid = BattleGrid.new(3)
+    ship_1 = Ship.new("A1", "A3")
+    ship_2 = Ship.new("B3", "C3")
+
+    p1_grid.place_ship(ship_1)
+    p1_grid.place_ship(ship_2)
+
+    expected = ["B1", "B2", "C1", "C2"]
+    assert_equal expected, p1_grid.unoccupied_cells
+  end
+
   def test_it_can_determine_if_new_ship_will_overlap_existing_ship
     p1_grid = BattleGrid.new(5)
     ship_1 = Ship.new("A1", "A4")
@@ -138,6 +150,23 @@ class BattleGridTest < Minitest::Test
     assert_equal :miss, p1_grid.cells["B4"]
   end
 
+  def test_it_can_list_valid_target_cells
+    p1_grid = BattleGrid.new(3)
+    ship_1 = Ship.new("A1", "A3")
+    ship_2 = Ship.new("B2", "C2")
+
+    p1_grid.place_ship(ship_1)
+    p1_grid.place_ship(ship_2)
+
+    p1_grid.resolve_shot("A3")
+    p1_grid.resolve_shot("B1")
+    p1_grid.resolve_shot("C2")
+    p1_grid.resolve_shot("C3")
+
+    expected = ["A1", "A2", "B2", "B3", "C1"]
+    assert_equal expected, p1_grid.valid_targets
+  end
+
   def test_it_can_list_ships_that_are_still_afloat
     p1_grid = BattleGrid.new(5)
     ship_1 = Ship.new("A1", "A4")
@@ -161,6 +190,20 @@ class BattleGridTest < Minitest::Test
     last_shot = p1_grid.resolve_shot("C3")
 
     assert_equal :gameover, last_shot
+  end
+
+  def test_it_can_return_masked_cell_list
+    p1_grid = BattleGrid.new(3)
+    ship_1 = Ship.new("B3", "C3")
+    p1_grid.place_ship(ship_1)
+    p1_grid.resolve_shot("B3")
+    p1_grid.resolve_shot("A1")
+
+    expected = {"A1" => :miss, "A2" => :water, "A3" => :water,
+                "B1" => :water, "B2" => :water, "B3" => :hit,
+                "C1" => :water, "C2" =>  :water, "C3" =>  :water}
+
+    assert_equal expected, p1_grid.masked_cells
   end
 
   def test_it_can_return_a_row

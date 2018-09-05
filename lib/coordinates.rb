@@ -7,11 +7,10 @@ module Coordinates
     all_coordinates(letters, numbers)
   end
 
-  
-
-  def unpack_coordinate(coord)
-    letter = coord[0]
-    number = coord[1].to_i
-    return [letter, number]
+  def all_coordinates(letters, numbers)
+    coordinates = letters.product(numbers)
+    coordinates.map! do |coord|
+      coord.join
+    end.sort
   end
 end

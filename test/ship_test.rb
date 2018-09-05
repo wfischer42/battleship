@@ -10,18 +10,6 @@ class ShipTest < Minitest::Test
     assert_instance_of Ship, ship
   end
 
-  def test_ship_class_calculates_coordinates_from_start_and_end_positions
-    coords_1 = Ship.coordinates("C1", "C4")
-    coords_2 = Ship.coordinates("A3", "D3")
-    assert_equal ["C1", "C2", "C3", "C4"], coords_1
-    assert_equal ["A3", "B3", "C3", "D3"], coords_2
-  end
-
-  def test_ship_class_returns_nil_coordinates_for_invalid_positions
-    coords_1 = Ship.coordinates("C1", "E4")
-    coores_2 = Ship.coordinates("F7", "B9")
-  end
-
   def test_ship_has_coordinates
     ship = Ship.new("A1", "A3")
     assert_equal ["A1", "A2", "A3"], ship.coordinates

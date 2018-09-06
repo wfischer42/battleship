@@ -22,6 +22,10 @@ class Ship
     @coordinates.sort != @hits.sort
   end
 
+  def size
+    @coordinates.size
+  end
+
   def resolve_shot(shot_coord)
     if @coordinates.include?(shot_coord)
       hits << shot_coord

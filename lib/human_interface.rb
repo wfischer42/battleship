@@ -23,38 +23,35 @@ class HumanInterface < PlayerInterface
     message = "#{player.capitalize} will be going first!"
     refresh(message)
     sleep 2 if player == :computer
+    # sleep 0.5
   end
 
-  def announce_resolution(player, resolution)
-    message =  "#{player.capitalize} aimed at #{resolution[0]}: #{resolution[1].to_s}!"
+  def announce_resolution(player, res)
+    message = missed_res(player, res) if res[1] == :miss
+    message = hit_res(player, res) if res[1] == :hit
+    message = sunk_res(player, res) if res[1] == :sunk
+    message = "" if res[1] == :gameover
 
     refresh(message)
     sleep 2 if player == :human
+    # sleep 0.5
+  end
+
+  def missed_res(player, res)
+      "#{player.capitalize} aimed at #{res[0]} and MISSED!"
+  end
+
+  def hit_res(player, res)
+    "#{player.capitalize} hit #{res[0]}!"
+  end
+
+  def sunk_res(player, res)
+    "#{player.capitalize} fired at #{res[0]} sunk a #{res[2]} unit ship!"
   end
 
   def announce_conclusion(winner, turns)
     message = "The #{winner.to_s} won after #{turns} shots!"
     refresh(message)
-  end
-
-  def get_placement(ship_size)
-    print "Place Ship (size #{ship_size}) > "
-    loop do
-      input = gets.chomp.upcase
-      exit if input[0] == "Q"
-      return input.split if valid_placement?(input.split, ship_size)
-      print "You can't put that ship there! Try again > "
-    end
-  end
-
-  def take_turn
-    print "Human: It's your turn! Take aim! > "
-    loop do
-      input = gets.chomp.upcase
-      exit if input[0] == "Q"
-      return input if valid_target?(input)
-      print "#{input} is not a valid target! Try again > "
-    end
   end
 
   def display_gameboard
@@ -66,31 +63,31 @@ class HumanInterface < PlayerInterface
     grouped = @opponent_board.group_by do |cell, value|
       cell[0]
     end
-    puts "     COOL COMPUTER"
-    puts "     1   2   3   4"
-    print "   -----------------\n"
+    puts "      COOL COMPUTER"
+    puts "     1    2    3    4"
+    print "   ---------------------\n"
 
     grouped.each do |letter, row|
       print " #{letter} |"
       display_row(row)
-      print "\n   -----------------\n"
+      print "\n   ---------------------\n"
     end
-    print "   |||||||||||||||||\n"
+    print "   |||||||||||||||||||||\n"
   end
 
   def display_player_board
     grouped = @player_board.group_by do |cell, value|
       cell[0]
     end
-    print "   -----------------\n"
+    print "   ---------------------\n"
 
     grouped.each do |letter, row|
       print " #{letter} |"
       display_row(row)
-      print "\n   -----------------\n"
+      print "\n   ---------------------\n"
     end
-    puts "     1   2   3   4\n"
-    puts "     FOOLISH HUMAN\n\n"
+    puts "     1    2    3    4\n"
+    puts "      FOOLISH HUMAN\n\n"
 
   end
 
@@ -101,9 +98,17 @@ class HumanInterface < PlayerInterface
   end
 
   def display_cell(cell)
-    print " ~ |" if cell == :water
-    print " S |" if cell == :ship
-    print " H |" if cell == :hit
-    print " M |" if cell == :miss
+
+    h = "\u{1F4A5}"	# explosion
+    m = "\u{1F4A6}" # splash
+    w = "\u{1F30A}"	# wave
+    s = "\u{1F6A4}"	# boat
+    u = "\u{2620} "	# skull & crossbones
+
+    print " #{w} |" if cell == :water
+    print " #{s} |" if cell == :ship
+    print " #{h} |" if cell == :hit
+    print " #{m} |" if cell == :miss
+    print " #{u} |" if cell == :sunk
   end
 end

@@ -17,17 +17,6 @@ class Game
     play
   end
 
-  # TODO: Send "Sunk" message when ship sinks
-  # TODO: Pause after player turn
-  # TODO: Unicode emojis
-=begin
-  U+1F4A5	explosion
-  U+1F4A6 splash
-  U+1F30A	wave
-  U+1F6A4	boat
-  U+2620	skull & crossbones
-=end
-
   def self.human_interface
     @players[:human][:interface]
   end

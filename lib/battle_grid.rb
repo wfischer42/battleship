@@ -4,8 +4,7 @@ require "./lib/coordinates"
 class BattleGrid
   include Coordinates
 
-  attr_reader :cell_list,
-              :cells,
+  attr_reader :cells,
               :ships
 
   def initialize(size)
@@ -23,19 +22,19 @@ class BattleGrid
     all_coordinates(@letters, numbers)
   end
 
-  def in_bounds?(*coords)
-    coords.flatten!
-    coords.all? do |coord|
-      @cells.keys.include?(coord)
-    end
-  end
-
   def overlap_any?(*coords)
     coords = coords.flatten.sort
     coord_1 = coords[0]
     coord_2 = coords[-1]
     @ships.any? do |ship|
       ship.overlap?(coord_1, coord_2)
+    end
+  end
+
+  def in_bounds?(*coords)
+    coords.flatten!
+    coords.all? do |coord|
+      @cells.keys.include?(coord)
     end
   end
 
@@ -65,16 +64,29 @@ class BattleGrid
     return [coord, nil] if (@cells[coord] == :miss) || (@cells[coord] == :hit)
     resolution = register_miss(coord) if @cells[coord] == :water
     resolution = register_hit(coord) if @cells[coord] == :ship
-    return [coord, resolution]
+    return [coord, resolution].flatten
   end
 
   def register_hit(coord)
     @cells[coord] = :hit
-    @ships.each do |ship|
-      ship.resolve_shot(coord)
+    hit_ship = @ships.find do |ship|
+      ship.resolve_shot(coord) == :hit
     end
-    return :gameover if ships_afloat.size == 0
-    return :hit
+    resolution = :hit
+    if !hit_ship.floating?
+      resolution = register_sunk(hit_ship)
+      if ships_afloat.size == 0
+        resolution = :gameover
+      end
+    end
+    return resolution
+  end
+
+  def register_sunk(ship)
+    ship.coordinates.each do |coord|
+      @cells[coord] = :sunk
+    end
+    return [:sunk, ship.size]
   end
 
   def register_miss(coord)

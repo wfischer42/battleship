@@ -3,34 +3,30 @@ require './lib/coordinates.rb'
 class PlayerInterface
   include Coordinates
 
-  def initialize
-    @shot_sequence = ["A1", "C1", "A2", "B3", "B1", "C3", "B2"]
-  end
-
   def update_boards(player_board, opponent_board)
     @player_board = player_board
     @opponent_board = opponent_board
   end
 
-  def valid_placement?(coord_1, coord_2, ship_size)
-
+  def valid_placement?(coords, ship_size)
+    return false if coords.length != 2
+    coords = full_coordinates(coords[0], coords[1])
+    coords && coords.size == ship_size && !cells_occupied?(coords)
   end
 
-  # TODO: override these test method in the interfaces
-  def get_placement(ship_size)
-    return ["A1", "A2"] if ship_size == 2
-    return ["B1", "B3"] if ship_size == 3
+  def cells_occupied?(coords)
+    coords.any? do |coord|
+      @player_board[coord] == :ship
+    end
   end
 
-  def get_shot
-    @shot_sequence.shift
+  def valid_cells(board)
+    board.select do |cell, value|
+      value == :water
+    end.keys
   end
 
-  def announce_resolution(resolution)
-    puts "It was a #{resolution.to_s}!"
-  end
-
-  def announce_conclusion(winner)
-    puts "The #{winner.to_s} won!"
+  def valid_target?(coord)
+    valid_cells(@opponent_board).include?(coord)
   end
 end

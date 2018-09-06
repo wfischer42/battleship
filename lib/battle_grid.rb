@@ -62,10 +62,10 @@ class BattleGrid
   end
 
   def resolve_shot(coord)
-    return nil if (@cells[coord] == :miss) || (@cells[coord] == :hit)
+    return [coord, nil] if (@cells[coord] == :miss) || (@cells[coord] == :hit)
     resolution = register_miss(coord) if @cells[coord] == :water
     resolution = register_hit(coord) if @cells[coord] == :ship
-    return resolution
+    return [coord, resolution]
   end
 
   def register_hit(coord)

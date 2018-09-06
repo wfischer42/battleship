@@ -14,7 +14,6 @@ class HumanInterface < PlayerInterface
   end
 
   def announce_commencement
-    # TODO: Revise message creation
     message = "It's time for an EPIC battle between ASCII battleships! Beware: I am a computer, and computers never lose. For example, HAL beat Dave, Deep Blue beat Gary Kasparov, and I will most certainly beat you! BWAHAHAHAHAHAHAHAHA.\n\nNow, place your ships by entering the starting and ending spaces where you want them..."
 
     refresh(message)

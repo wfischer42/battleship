@@ -81,6 +81,18 @@ class BattleGrid
     @cells[coord] = :miss
   end
 
+  def unoccupied_cells
+    @cells.select do |cell, value|
+      value == :water
+    end.keys
+  end
+
+  def valid_targets
+    @cells.select do |cell, value|
+      (value == :ship) || (value == :water)
+    end.keys
+  end
+
   def row(letter)
     row_cells = @cells.select do |cell, value|
       cell[0] == letter
@@ -92,5 +104,12 @@ class BattleGrid
     @letters.map do |letter|
       row(letter)
     end
+  end
+
+  def masked_cells
+    @cells.map do |cell, value|
+      value = :water if value == :ship
+      [cell, value]
+    end.to_h
   end
 end

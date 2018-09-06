@@ -114,8 +114,8 @@ class BattleGridTest < Minitest::Test
     shot_1 = p1_grid.resolve_shot("B2")
     shot_2 = p1_grid.resolve_shot("A2")
 
-    assert_equal :miss, shot_1
-    assert_equal :hit, shot_2
+    assert_equal ["B2", :miss], shot_1
+    assert_equal ["A2", :hit], shot_2
   end
 
   def test_registers_hit_with_ship
@@ -189,7 +189,7 @@ class BattleGridTest < Minitest::Test
     p1_grid.resolve_shot("B3")
     last_shot = p1_grid.resolve_shot("C3")
 
-    assert_equal :gameover, last_shot
+    assert_equal ["C3", :gameover], last_shot
   end
 
   def test_it_can_return_masked_cell_list
